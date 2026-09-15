@@ -122,6 +122,9 @@ func Execute(args []string) (err error) {
 
 func executeWithRuntime(args []string, runtime *app.Runtime) (err error) {
 	var kctx *kong.Context
+	if len(args) > 0 && args[0] == resolveSentinel {
+		return executeResolve(args[1:], runtime)
+	}
 	runtime = normalizedRuntime(runtime)
 	runtimeIO := runtime.IO
 
@@ -147,8 +150,7 @@ func executeWithRuntime(args []string, runtime *app.Runtime) (err error) {
 	if err = verifyLockedFlagsExist(parser.Model.Node); err != nil {
 		return reportEarlyError(kctx, runtimeIO.Err, err)
 	}
-	args = rewriteDocsCellUpdateContentArgs(parser.Model, args)
-	args = rewriteDesirePathArgs(parser.Model, args)
+	args = preprocessArgs(parser.Model, args)
 
 	defer func() {
 		if r := recover(); r != nil {

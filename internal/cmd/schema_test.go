@@ -161,6 +161,53 @@ func schemaFlagByName(t *testing.T, node *schemaNode, name string) schemaFlag {
 	return schemaFlag{}
 }
 
+func TestExecute_Schema_TagType(t *testing.T) {
+	doc := schemaForCommand(t, "docs insert-image")
+	fileFlag := schemaFlagByName(t, doc.Command, "file")
+	if fileFlag.TagType != "existingfile" {
+		t.Fatalf("file --file tag_type = %q, want %q", fileFlag.TagType, "existingfile")
+	}
+
+	docIDArg := schemaArgByName(t, doc.Command, "docId")
+	if docIDArg.TagType != "" {
+		t.Fatalf("docId positional tag_type = %q, want empty", docIDArg.TagType)
+	}
+
+	urlFlag := schemaFlagByName(t, doc.Command, "url")
+	if urlFlag.TagType != "" {
+		t.Fatalf("plain string --url tag_type = %q, want empty (no tag_type key)", urlFlag.TagType)
+	}
+
+	raw := marshalSchemaFlag(t, urlFlag)
+	if strings.Contains(raw, "tag_type") {
+		t.Fatalf("expected no tag_type key for --url, got %s", raw)
+	}
+	rawFile := marshalSchemaFlag(t, fileFlag)
+	if !strings.Contains(rawFile, `"tag_type":"existingfile"`) {
+		t.Fatalf("expected tag_type key for --file, got %s", rawFile)
+	}
+}
+
+func marshalSchemaFlag(t *testing.T, flag schemaFlag) string {
+	t.Helper()
+	b, err := json.Marshal(flag)
+	if err != nil {
+		t.Fatalf("marshal flag: %v", err)
+	}
+	return string(b)
+}
+
+func schemaArgByName(t *testing.T, node *schemaNode, name string) schemaArg {
+	t.Helper()
+	for _, arg := range node.Positionals {
+		if arg.Name == name {
+			return arg
+		}
+	}
+	t.Fatalf("%s missing positional %s", node.Path, name)
+	return schemaArg{}
+}
+
 func TestExecute_SchemaRejectsPlainMode(t *testing.T) {
 	var runErr error
 	errText := captureStderr(t, func() {

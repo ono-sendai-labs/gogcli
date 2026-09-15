@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- CLI: add hidden `gog __resolve <argv...>`, a parse-only JSON mode for policy wrappers that need to decide from gog's own parse instead of reimplementing its grammar. See [docs/resolve.md](docs/resolve.md).
+- Schema: report each flag's and positional's Kong `type:"..."` tag as `tag_type` in `gog schema` output.
+
 ## 0.40.0 - 2026-09-11
 
 **Highlights:** Preserve Slides styling, format paragraphs, and reuse cached Discovery documents; duplicate or inspect individual spreadsheet tabs and sort Drive files.

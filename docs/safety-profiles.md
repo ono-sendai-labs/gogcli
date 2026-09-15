@@ -293,3 +293,10 @@ commands fail before any command handler or Google API call runs.
 Safety profiles also do not replace OAuth scopes, account separation, or Google
 Workspace policy. Use the narrowest practical OAuth scopes and account access,
 then use a baked profile as an additional local execution guard.
+
+## See Also
+
+Writing a policy wrapper that decides whether to run a `gog` invocation at
+all (for example, restricting which Google Docs an AI agent may edit)? See
+[`gog __resolve`](resolve.md) for a parse-only JSON mode that reports how gog
+would resolve an invocation without running it.

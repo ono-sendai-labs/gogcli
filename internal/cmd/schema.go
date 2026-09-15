@@ -73,6 +73,7 @@ type schemaFlag struct {
 	Short       string   `json:"short,omitempty"`
 	Help        string   `json:"help,omitempty"`
 	Type        string   `json:"type"`
+	TagType     string   `json:"tag_type,omitempty"`
 	Required    bool     `json:"required,omitempty"`
 	Default     string   `json:"default,omitempty"`
 	HasDefault  bool     `json:"has_default,omitempty"`
@@ -87,6 +88,7 @@ type schemaArg struct {
 	Name       string   `json:"name"`
 	Help       string   `json:"help,omitempty"`
 	Type       string   `json:"type"`
+	TagType    string   `json:"tag_type,omitempty"`
 	Required   bool     `json:"required,omitempty"`
 	Default    string   `json:"default,omitempty"`
 	HasDefault bool     `json:"has_default,omitempty"`
@@ -327,6 +329,7 @@ func schemaFlags(node *kong.Node, hide bool) []schemaFlag {
 				Short:       flagShortString(f.Short),
 				Help:        strings.TrimSpace(f.Help),
 				Type:        reflectTypeString(f.Target),
+				TagType:     resolveTagType(f.Tag),
 				Required:    f.Required,
 				Default:     strings.TrimSpace(f.Default),
 				HasDefault:  f.HasDefault,
@@ -352,6 +355,7 @@ func schemaPositionals(node *kong.Node) []schemaArg {
 			Name:       p.Name,
 			Help:       strings.TrimSpace(p.Help),
 			Type:       reflectTypeString(p.Target),
+			TagType:    resolveTagType(p.Tag),
 			Required:   p.Required,
 			Default:    strings.TrimSpace(p.Default),
 			HasDefault: p.HasDefault,
